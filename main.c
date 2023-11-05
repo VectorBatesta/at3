@@ -40,6 +40,7 @@ int main(int argc, char* argv[]){
 
 
     int *valores = (int*) malloc(quantLinhas * sizeof(int)); //aloca tamanho de 261488
+    int *valores_out = (int*) malloc(quantLinhas * sizeof(int)); //vetor filtrado
    
     for(int i = 0; fgets(linha, sizeof(linha), arq); i++){ //false se EOF
         valores[i] = atoi(linha); //atribui para int
@@ -53,19 +54,42 @@ int main(int argc, char* argv[]){
 
 
 
-
+    //ver SDL
 
 
 
 
 
     int Fs = 44100; //frequency
+    double G[11] = {0.9552, 0.9552, 0.9445, 0.9445, 0.9143, 0.9143, 0.8212, 0.8212, 0.4440, 0.4440, 1.0000};
+    double SOS[6][11] ={{1.0000, -1.9999, 1.0000, 1.0000, -1.9967, 0.9982},
+                        {1.0000, -1.9985, 1.0000, 1.0000, -1.9993, 0.9994},
+                        {1.0000, -1.9999, 1.0000, 1.0000, -1.9919, 0.9934},
+                        {1.0000, -1.9983, 1.0000, 1.0000, -1.9980, 0.9982},
+                        {1.0000, -1.9999, 1.0000, 1.0000, -1.9821, 0.9841},
+                        {1.0000, -1.9977, 1.0000, 1.0000, -1.9963, 0.9964},
+                        {1.0000, -2.0000, 1.0000, 1.0000, -1.9551, 0.9581},
+                        {1.0000, -1.9956, 1.0000, 1.0000, -1.9937, 0.9938},
+                        {1.0000, -2.0000, 1.0000, 1.0000, -1.9903, 0.9904},
+                        {1.0000, -1.9694, 1.0000, 1.0000, -1.8731, 0.8786}};
 
-    char *audio_arquivo;
-    audio_arquivo = "test"; //teste
 
-    fprintf(arq_out, audio_arquivo); //teste print para escrever string em mp3
 
+    valores_out[0] = 0;
+    for (int i = 1; i < quantLinhas; i++){
+        for (int j = 0; j < 11; j++){
+            valores_out[i + j] = valores[i]*G[j] + valores_out[i-1];
+        }
+    }
+
+
+
+
+
+
+    for (int i = 0; i < quantLinhas; i++){
+        fprintf(arq_out, "%i\n", valores_out[i]); //teste print para escrever string em mp3
+    }
 
 
 
