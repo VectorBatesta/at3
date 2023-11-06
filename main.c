@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
         arq = fopen("heart_beat.txt", "r");
     }
 
-    arq_out = fopen("heart_beat.mp3", "w");
+    arq_out = fopen("heart_beat_out.txt", "w");
 
     //teste se o arquivo está na pasta do projeto
     if (arq == NULL){
