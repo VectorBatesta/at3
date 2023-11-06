@@ -6,6 +6,7 @@ int main(int argc, char* argv[]){
     FILE *arq;
     FILE *arq_out;
 
+    //seta o input com o primeiro FILE
     if (argc > 1){ //se foi passado por argc e argv[]
         char const* const nomeArq = argv[1];
         arq = fopen(nomeArq, "r");
@@ -14,6 +15,7 @@ int main(int argc, char* argv[]){
         arq = fopen("heart_beat.txt", "r");
     }
 
+    //seta o output com o outro FILE
     arq_out = fopen("heart_beat_out.txt", "w");
 
     //teste se o arquivo está na pasta do projeto
@@ -54,13 +56,15 @@ int main(int argc, char* argv[]){
 
 
 
-    //ver SDL
+    //ver SDL <- nao mais preciso, apagar essa linha depois
 
 
 
 
 
     int Fs = 44100; //frequency
+
+    //variaveis do matlab, G e SOS do FilterDesigner
     double G[11] = {0.9552, 0.9552, 0.9445, 0.9445, 0.9143, 0.9143, 0.8212, 0.8212, 0.4440, 0.4440, 1.0000};
     double SOS[6][11] ={{1.0000, -1.9999, 1.0000, 1.0000, -1.9967, 0.9982},
                         {1.0000, -1.9985, 1.0000, 1.0000, -1.9993, 0.9994},
@@ -74,10 +78,10 @@ int main(int argc, char* argv[]){
                         {1.0000, -1.9694, 1.0000, 1.0000, -1.8731, 0.8786}};
 
 
-
-    valores_out[0] = 0;
-    for (int i = 1; i < quantLinhas; i++){
-        for (int j = 0; j < 11; j++){
+    //manipula output:
+    valores_out[0] = 0; //primeiro é zero pra tratar valores_out[i - 1]
+    for (int i = 1; i < quantLinhas; i++){ //percorre todos os valores (até max)
+        for (int j = 0; j < 11; j++){ //errado eu acho
             valores_out[i + j] = valores[i]*G[j] + valores_out[i-1];
         }
     }
@@ -86,9 +90,9 @@ int main(int argc, char* argv[]){
 
 
 
-
+    //imprime os valores manipulados para output, botar no matlab para ouvir depois
     for (int i = 0; i < quantLinhas; i++){
-        fprintf(arq_out, "%i\n", valores_out[i]); //teste print para escrever string em mp3
+        fprintf(arq_out, "%i\n", valores_out[i]);
     }
 
 
