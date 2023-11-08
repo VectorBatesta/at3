@@ -58,24 +58,13 @@ int main(int argc, char* argv[]){
 
 
     int Fs = 44100; //frequency
-
-    //variaveis do matlab, G e SOS do FilterDesigner
-    //double G[11] = {0.9552, 0.9552, 0.9445, 0.9445, 0.9143, 0.9143, 0.8212, 0.8212, 0.4440, 0.4440, 1.0000};
-    /*double SOS[6][11] ={{1.0000, -1.9999, 1.0000, 1.0000, -1.9967, 0.9982},
-                        {1.0000, -1.9985, 1.0000, 1.0000, -1.9993, 0.9994},
-                        {1.0000, -1.9999, 1.0000, 1.0000, -1.9919, 0.9934},
-                        {1.0000, -1.9983, 1.0000, 1.0000, -1.9980, 0.9982},
-                        {1.0000, -1.9999, 1.0000, 1.0000, -1.9821, 0.9841},
-                        {1.0000, -1.9977, 1.0000, 1.0000, -1.9963, 0.9964},
-                        {1.0000, -2.0000, 1.0000, 1.0000, -1.9551, 0.9581},
-                        {1.0000, -1.9956, 1.0000, 1.0000, -1.9937, 0.9938},
-                        {1.0000, -2.0000, 1.0000, 1.0000, -1.9903, 0.9904},
-                        {1.0000, -1.9694, 1.0000, 1.0000, -1.8731, 0.8786}};*/
     
     //valores em 'b' e 'a'
-    double b[20] = {0.0000, -0.0002, 0.0019, -0.0110, 0.0463, -0.1466, 0.3625, -0.7171, 1.1525, -1.5198, 1.6536, -1.4869, 1.1031, -0.6715, 0.3321, -0.1314, 0.0406, -0.0095, 0.0016, -0.0002, 0.0000};
-    double a[20] = {0.0000, -0.0002, 0.0017, -0.0103, 0.0435, -0.1391, 0.3475, -0.6944, 1.1278, -1.5032, 1.6533, -1.5032, 1.1278, -0.6944, 0.3475, -0.1391, 0.0435, -0.0103, 0.0017, -0.0002, 0.0000};
-        
+    double b[7] = {0.0405, -0.1621,  0.2025,        0, -0.2025,  0.1621, -0.0405};
+    double a[7] = {1.0000, -5.9947, 14.9748, -19.9523, 14.9549, -5.9788,  0.9960};
+
+    int tamB = sizeof(b) / sizeof(b[0]);
+    int tamA = sizeof(a) / sizeof(a[0]);
 
 ///////////////////////////////////////////////
 
@@ -86,16 +75,19 @@ int main(int argc, char* argv[]){
         valores_out[i] = 0; 
     }
 
-    [todo: arrumar o filtro e usar ordem correta]
-
     //filtro
     for (int i = 1; i < quantLinhas; i++){ //percorre todos os valores (até max)
-        for(int ai = 0; ai < 21; ai++){ //percorre todos os valores de 'a'
-            valores_out[i] += valores[i - 1] * a[ai];
+
+        for(int bi = 0; bi < tamB; bi++){ //percorre todos os valores de 'b'
+            if (i - bi >= 0 && i - bi < quantLinhas){
+                valores_out[i] += valores[i - bi] * b[bi];
+            }
         }
         
-        for(int bi = 0; bi < 21; bi++){ //percorre todos os valores de 'b'
-            valores_out[i] -= valores[i - 1] * b[bi];
+        for(int ai = 1; ai < tamA; ai++){ //percorre todos os valores de 'a'
+            if (i - ai-1 >= 0 && i - ai-1 < quantLinhas){
+                valores_out[i] -= valores[i - ai-1] * a[ai];
+            }
         }
     }
 
@@ -111,3 +103,4 @@ int main(int argc, char* argv[]){
     fclose(arq_out);
     return EXIT_SUCCESS;
 }
+/**/
