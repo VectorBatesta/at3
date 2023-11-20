@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int main(int argc, char* argv[]){
     //inicializa arquivos
@@ -63,8 +64,10 @@ int main(int argc, char* argv[]){
     double b[7] = {0.0405, -0.1621,  0.2025,        0, -0.2025,  0.1621, -0.0405};
     double a[7] = {1.0000, -5.9947, 14.9748, -19.9523, 14.9549, -5.9788,  0.9960};
 
+    //pega tamanho de 'b' e 'a'
     int tamB = sizeof(b) / sizeof(b[0]);
     int tamA = sizeof(a) / sizeof(a[0]);
+    printf("\nTamanho de 'b': %i\nTamanho de 'a': %i\n", tamB, tamA);
 
 ///////////////////////////////////////////////
 
@@ -75,25 +78,28 @@ int main(int argc, char* argv[]){
         valores_out[i] = 0; 
     }
 
+    printf("t=%i,\n", valores[0]);
+    printf("t=%i,\n", valores[1]);
+
     //filtro
-    for (int i = 1; i < quantLinhas; i++){ //percorre todos os valores (até max)
+    for (int i = 0; i < quantLinhas; i++){ //percorre todos os valores (até max)
 
         for(int bi = 0; bi < tamB; bi++){ //percorre todos os valores de 'b'
-            if (i - bi >= 0 && i - bi < quantLinhas){
-                valores_out[i] += valores[i - bi] * b[bi];
+            if (i - bi >= 0){
+                valores_out[i] += valores[i - bi] * b[bi] * 0.0001;
             }
         }
         
         for(int ai = 1; ai < tamA; ai++){ //percorre todos os valores de 'a'
-            if (i - ai-1 >= 0 && i - ai-1 < quantLinhas){
-                valores_out[i] -= valores[i - ai-1] * a[ai];
+            if (i - ai >= 0){
+                valores_out[i] -= valores_out[i - ai] * a[ai];
             }
         }
     }
 
     //imprime os valores manipulados para output, botar no matlab para ouvir depois
     for (int i = 0; i < quantLinhas; i++){
-        fprintf(arq_out, "%i\n", valores_out[i]);
+        fprintf(arq_out, "%f\n", valores_out[i]);
     }
 
 
