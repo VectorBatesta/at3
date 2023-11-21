@@ -42,12 +42,12 @@ int main(int argc, char* argv[]){
     rewind(arq); //volta pro começo do arq
 
 
-    int *valores = (int*) malloc(quantLinhas * sizeof(int)); //aloca tamanho de 261488
-    double *valores_out = (double*) malloc(quantLinhas * sizeof(double)); //vetor filtrado
+    long double *valores = (long double*) malloc(quantLinhas * sizeof(long double)); //aloca tamanho de 261488
+    long double *valores_out = (long double*) malloc(quantLinhas * sizeof(long double)); //vetor filtrado
 
 
     for(int i = 0; fgets(linha, sizeof(linha), arq); i++){ //false se EOF
-        valores[i] = atoi(linha); //atribui para int
+        valores[i] = strtold(linha, NULL); //atribui para int
     }
 
     //printa TODOS OS 261488 VALORES! - apenas para teste
@@ -61,12 +61,13 @@ int main(int argc, char* argv[]){
     int Fs = 44100; //frequency
     
     //valores em 'b' e 'a'
-    double b[7] = {0.0405, -0.1621,  0.2025,        0, -0.2025,  0.1621, -0.0405};
-    double a[7] = {1.0000, -5.9947, 14.9748, -19.9523, 14.9549, -5.9788,  0.9960};
+    //ong double b[7] = {0.0405, -0.1621,  0.2025,        0, -0.2025,  0.1621, -0.0405};
+    long double b[7] = {4.05371351613149e-06, -1.6207339707449e-05, 2.02535396456892e-05, 0, -2.02535396456892e-05, 1.6207339707449e-05, -4.05371351613149e-06};
+    long double a[7] = {1, -5.99469877066624, 14.9748204222116, -19.9522893252495, 14.9549337304216, -5.97878731959256, 0.996021262959231};
 
     //pega tamanho de 'b' e 'a'
-    int tamB = sizeof(b) / sizeof(b[0]);
-    int tamA = sizeof(a) / sizeof(a[0]);
+    int tamB = sizeof(b) / sizeof(b[0]); //7
+    int tamA = sizeof(a) / sizeof(a[0]); //7
     printf("\nTamanho de 'b': %i\nTamanho de 'a': %i\n", tamB, tamA);
 
 ///////////////////////////////////////////////
@@ -78,15 +79,15 @@ int main(int argc, char* argv[]){
         valores_out[i] = 0; 
     }
 
-    printf("t=%i,\n", valores[0]);
-    printf("t=%i,\n", valores[1]);
+    printf("\nvalores[0]=%Lf,\n", valores[0]);
+    printf("valores[1]=%Lf,\n", valores[1]);
 
     //filtro
     for (int i = 0; i < quantLinhas; i++){ //percorre todos os valores (até max)
 
         for(int bi = 0; bi < tamB; bi++){ //percorre todos os valores de 'b'
             if (i - bi >= 0){
-                valores_out[i] += valores[i - bi] * b[bi] * 0.0001;
+                valores_out[i] += valores[i - bi] * b[bi];
             }
         }
         
@@ -99,10 +100,12 @@ int main(int argc, char* argv[]){
 
     //imprime os valores manipulados para output, botar no matlab para ouvir depois
     for (int i = 0; i < quantLinhas; i++){
-        fprintf(arq_out, "%f\n", valores_out[i]);
+        fprintf(arq_out, "%Lf\n", valores_out[i]);
     }
 
 
+    printf("\nvalores_out[0]=%Lf,\n", valores_out[0]);
+    printf("valores_out[1]=%Lf,\n", valores_out[1]);
 
     //termina programa fechando arquivos
     fclose(arq);
